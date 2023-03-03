@@ -9,8 +9,9 @@ class Attendance extends Model
 {
     use HasFactory;
 protected $fillable = [
-        'date',
+        
         'status',
+        'date',
     ];
        public function staff(){
         return $this->BelongsToMany(Staff::class);
@@ -20,3 +21,4 @@ protected $fillable = [
     }
 
 }
+?>

@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('status');
-            $table->unsignedBigInteger('staff_id')->unique();
+            $table->unsignedBigInteger('staff_id');
             $table->foreign('staff_id')->references('id')->on('staff')->onDelete('cascade');
 
-            $table->unsignedBigInteger('applicant_id')->unique();
+            $table->unsignedBigInteger('applicant_id');
             $table->foreign('applicant_id')->references('id')->on('applicants')->onDelete('cascade');
             
-            $table->unsignedBigInteger('section_id')->unique();
+            $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
             $table->timestamps();
         });
