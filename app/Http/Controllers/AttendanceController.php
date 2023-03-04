@@ -32,5 +32,41 @@ class AttendanceController extends Controller
         'message' => 'Attendance was recorded successfully!',
     ]);
 }
+
+public function getAttendance(Request $request, $id) {
+    $attendance = Attendance::findOrFail($id);//getting an attendance by a specific id
+    return response()->json([
+        'message' => $attendance
+    ]);
+}
+
+public function getAttendances(Request $request){
+    $attendance = Attendance::get();//Getting all applicants
+    return response()->json([
+        'message' => $attendance,
+    
+    ]);
+}
+public function editAttendance(Request $request, $id){
+    $attendance = Attendance::find($id);
+    $inputs = $request->except('_method'); //except save everything in request except the ones in our array
+    $attendance->update($inputs);
+  
+    return response()->json([
+    'message' => 'Attendance edited succssesfully',
+    'attendance' => $attendance,
+    ]);
+}
+
+public function deleteAttendance(Request $request, $id){
+    $attendance = Attendance::find($id);
+    $attendance->delete();
+    return response()->json([
+        'message' => 'Attendance Deleted Successfully',
+    
+    
+    ]);
+}
+
 }
 ?>

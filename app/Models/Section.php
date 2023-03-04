@@ -24,3 +24,4 @@ class Section extends Model
         return $this->belongsToMany(Subject::class);
     }
 }
+?>

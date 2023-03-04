@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Applicant;
+use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage; 
 
@@ -27,5 +28,41 @@ class ApplicantController extends Controller
     
     ]);
  }
+
+ public function getApplicants(Request $request){
+    $applicant = Applicant::get();//Getting all applicants
+    return response()->json([
+        'message' => $applicant,
+    
+    
+    ]);
 }
+
+public function editApplicant(Request $request, $id){
+    $applicant = Applicant::find($id);
+    $inputs = $request->except('image','_method'); //except save everything in request except the ones in our array
+    $applicant->update($inputs);
+    if($request->hasFile('image')){
+        Storage::delete('public/'.$applicant->image);
+        $image_path = $request->file('image')->store('images','public');
+        $applicant->update(['image' => $image_path]);
+    }
+    return response()->json([
+    'message' => 'applicant edited succssesfully',
+    'applicant' => $applicant,
+    ]);
+}
+
+public function deleteApplicant(Request $request, $id){
+    $applicant = Applicant::find($id);
+    $applicant->delete();
+    return response()->json([
+        'message' => 'Applicant Deleted Successfully',
+    
+    
+    ]);
+}
+
+}
+
 ?>
