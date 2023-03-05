@@ -24,8 +24,6 @@ class ApplicantController extends Controller
     $applicant->save();
     return response()->json([
         'message' => 'Applicant created successfully!',
-    
-    
     ]);
  }
 
@@ -33,8 +31,7 @@ class ApplicantController extends Controller
     $applicant = Applicant::get();//Getting all applicants
     return response()->json([
         'message' => $applicant,
-    
-    
+
     ]);
 }
 
@@ -42,6 +39,13 @@ public function editApplicant(Request $request, $id){
     $applicant = Applicant::find($id);
     $inputs = $request->except('image','_method'); //except save everything in request except the ones in our array
     $applicant->update($inputs);
+
+    $author_id = $request->input('author_id');
+    $author = Author::find($author_id);
+
+    if($request->has('categories')){
+        $book->categories()->sync(json_decode($request->input('categories')));
+    }
     if($request->hasFile('image')){
         Storage::delete('public/'.$applicant->image);
         $image_path = $request->file('image')->store('images','public');

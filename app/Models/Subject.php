@@ -20,3 +20,4 @@ protected $fillable = [
         return $this->belongsToMany(Section::class);
     }
 }
+?>
