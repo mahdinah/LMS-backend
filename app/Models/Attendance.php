@@ -12,8 +12,11 @@ protected $fillable = [
         'date',
         'status',
     ];
+      public function section(){
+        return $this->belongsTo(Section::class);
+    }
        public function staff(){
-        return $this->BelongsToMany(Staff::class);
+        return $this->BelongsTo(Staff::class);
     }
       public function applicant(){
         return $this->BelongsTo(Attendance::class);

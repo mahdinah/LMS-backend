@@ -20,6 +20,6 @@ protected $fillable = [
         return $this->hasOne(Attendance::class);
     }    
   public function section(){
-        return $this->BelongsToMany(Section::class);
+        return $this->belongsTo(Section::class);
     }
 }

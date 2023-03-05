@@ -17,10 +17,13 @@ class Section extends Model
         return $this->hasMany(Applicant::class);
     }
     public function grade(){
-        return $this->BelongsToMany(Grade::class);
+        return $this->BelongsTo(Grade::class);
     }
 
         public function subject(){
         return $this->belongsToMany(Subject::class);
     }
-}
+
+  public function attendance(){
+        return $this->hasOne(Attendance::class);
+    }}
