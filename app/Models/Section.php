@@ -13,14 +13,17 @@ class Section extends Model
         'name',
     ];
 
-      public function applicants(){
+    public function applicants()
+    {
         return $this->hasMany(Applicant::class);
     }
-    public function grade(){
-        return $this->BelongsToMany(Grade::class);
+    public function grade()
+    {
+        return $this->BelongsTo(Grade::class);
     }
 
-        public function subject(){
+    public function subject()
+    {
         return $this->belongsToMany(Subject::class);
     }
 }

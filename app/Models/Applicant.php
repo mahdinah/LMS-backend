@@ -9,17 +9,19 @@ class Applicant extends Model
 {
     use HasFactory;
 
-protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
         'image',
     ];
 
- public function attendance(){
+    public function attendance()
+    {
         return $this->hasOne(Attendance::class);
-    }    
-  public function section(){
+    }
+    public function section()
+    {
         return $this->BelongsToMany(Section::class);
     }
 }
