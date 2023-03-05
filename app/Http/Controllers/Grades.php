@@ -39,7 +39,7 @@ class Grades extends Controller
     {
         $grade = Grade::find($id);
         if (!$grade) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'Grade not found'], 404);
         }
         return response()->json($grade);
     }
