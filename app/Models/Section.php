@@ -11,16 +11,6 @@ class Section extends Model
 
     protected $fillable = [
         'name',
+        'classroom_id',
     ];
-
-      public function applicants(){
-        return $this->hasMany(Applicant::class);
-    }
-    public function grade(){
-        return $this->BelongsToMany(Grade::class);
-    }
-
-        public function subject(){
-        return $this->belongsToMany(Subject::class);
-    }
 }
