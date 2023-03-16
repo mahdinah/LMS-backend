@@ -13,22 +13,4 @@ class Section extends Model
         'name',
         'classroom_id',
     ];
-<<<<<<< HEAD
-
-      public function applicants(){
-        return $this->hasMany(Applicant::class);
-    }
-    public function grade(){
-        return $this->BelongsTo(Grade::class);
-    }
-
-        public function subject(){
-        return $this->belongsToMany(Subject::class);
-    }
-
-  public function attendance(){
-        return $this->hasOne(Attendance::class);
-    }}
-=======
 }
->>>>>>> mahdi

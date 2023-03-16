@@ -3,27 +3,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
-use App\Http\Controllers\AddApplicant;
-use App\Http\Controllers\addAttendance;
-=======
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
->>>>>>> mahdi
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-<<<<<<< HEAD
-Route::post('/applicant',[addApplicant::class,"addApplicant"]);
-Route::get('/applicantSection/{id}',[addApplicant::class,"getSection"]);
-Route::get('/applicant/{id}',[addApplicant::class,"getApplicant"]);
-Route::patch('/applicant/{id}',[addApplicant::class,"editApplicant"]);
-Route::delete('/applicant/{id}',[addApplicant::class,"deleteApplicant"]);
-Route::post('/attendance',[addAttendance::class,"addAttendance"]);
-Route::patch('/attendance/{id}',[addAttendance::class,"editAttendance"]);
-Route::delete('/attendance/{id}',[addAttendance::class,"deleteAttendance"]);
-=======
 
 Route::get('/image/{filename}', function ($filename) {
     $path = storage_path('app/public/images/') . $filename;
@@ -91,4 +76,3 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('/task', 'TaskController@store');
     Route::delete('/task/{id}', 'TaskController@destroy');
 });
->>>>>>> mahdi
