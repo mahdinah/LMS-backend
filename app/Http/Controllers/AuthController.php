@@ -2,67 +2,80 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
-use Auth;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Validator;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function __construct()
     {
-        $admin = Admin::create([
-            'fname' => $request->fname,
-            'lname' => $request->lname,
-            'username' => $request->username,
-            'password' => $request->password,
-        ]);
-
-        $token = auth()->login($admin);
-
-        return $this->respondWithToken($token);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-    public function login()
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
     {
-        $credentials = request(['username', 'password']);
-
-        if (!$token = auth()->attempt($credentials)) {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        if (!$token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        try {
-            $data = Admin::where('username', $credentials['username'])->first();
-            $data->update(['remember_token' => $token]);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        // return Admin::where('username', $credentials['username'])->first();
-        return $this->respondWithToken($token);
+        return $this->createNewToken($token);
     }
 
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logout()
     {
-        $credentials = request(['username']);
-
-        try {
-            $data = Admin::where('username', $credentials['username'])->first();
-            $data->update(['remember_token' => null]);
-        } catch (Exception $e) {
-            return false;
-        }
-
         auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'User successfully signed out']);
     }
 
-    protected function respondWithToken($token)
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->createNewToken(auth()->refresh());
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+ 
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function createNewToken($token)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
         ]);
     }
 }

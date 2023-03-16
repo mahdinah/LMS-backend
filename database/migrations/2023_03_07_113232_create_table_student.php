@@ -13,6 +13,7 @@ class CreateTableStudent extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('students')) {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('fname');
@@ -30,7 +31,7 @@ class CreateTableStudent extends Migration
             $table->foreignId('section_id')->constrained('sections');
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.

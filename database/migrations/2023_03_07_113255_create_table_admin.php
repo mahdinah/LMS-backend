@@ -13,6 +13,7 @@ class CreateTableAdmin extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('admins')) {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->string('fname');
@@ -23,7 +24,7 @@ class CreateTableAdmin extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.

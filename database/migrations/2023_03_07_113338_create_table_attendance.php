@@ -13,6 +13,7 @@ class CreateTableAttendance extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('attendances')) {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->string('description');
@@ -20,7 +21,7 @@ class CreateTableAttendance extends Migration
             $table->foreignId('section_id')->constrained('sections');
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.

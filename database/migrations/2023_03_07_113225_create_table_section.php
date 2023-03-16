@@ -13,13 +13,14 @@ class CreateTableSection extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('sections')) {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->foreignId('classroom_id')->constrained('classrooms');
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.

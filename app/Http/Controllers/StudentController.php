@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class StudentController extends Controller
 {
@@ -13,13 +15,16 @@ class StudentController extends Controller
     {
         $data = new Student;
         try {
-            if ($request->image && $request->image !== "") {
-                $image = $request->image;
-                $name = time() . '.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-                // \Image::make($request->get('image'))->save(storage_path('app/public/images/') . $name);
+            if ($request->has('image') && $request->image->isValid()) {
+                $image = $request->file('image');
+                $name = time() . '.' . $image->getClientOriginalExtension();
+                $imageResized = Image::make($image)->resize(400, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->encode('jpg', 80);
+                Storage::disk('public')->put('images/' . $name, $imageResized);
+                $data->image = $name;
             }
             $data->fill($request->all());
-            $data->image = $name;
             $data->save();
             return [
                 'success' => true,
@@ -61,28 +66,21 @@ class StudentController extends Controller
         $data = Student::where('id', $id)->first();
 
         try {
-            if ($request->image && $request->image !== $data->image) {
+            if ($request->has('image') && $request->image->isValid()) {
                 $image = $request->image;
-                $name = time() . '.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-                // \Image::make($request->get('image'))->save(storage_path('app/public/images/') . $name);
-                if (file_exists(storage_path('app/public/images/') . $data->image)) {
-                    unlink(storage_path('app/public/images/') . $data->image);
+                $name = time() . '.' . $image->getClientOriginalExtension();
+                $imageResized = Image::make($image)->resize(400, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->encode('jpg', 80);
+                Storage::disk('public')->put('images/' . $name, $imageResized);
+                if ($data->image && Storage::disk('public')->exists('images/' . $data->image)) {
+                    Storage::disk('public')->delete('images/' . $data->image);
                 }
-                $data->update(['image' => $name]);
+                $data->image = $name;
             }
 
-            $data->update(['fname' => $request->fname]);
-            $data->update(['lname' => $request->lname]);
-            $data->update(['fathername' => $request->fathername]);
-            $data->update(['mothername' => $request->mothername]);
-            $data->update(['gender' => $request->gender]);
-            $data->update(['dateofbirth' => $request->dateofbirth]);
-            $data->update(['email' => $request->email]);
-            $data->update(['pnumber' => $request->pnumber]);
-            $data->update(['address' => $request->address]);
-            $data->update(['HealthProblems' => $request->HealthProblems]);
-            $data->update(['bloodType' => $request->bloodType]);
-            $data->update(['section_id' => $request->section_id]);
+            $data->fill($request->all());
+            $data->save();
             return [
                 'success' => true,
                 'data' => $data,
@@ -96,8 +94,8 @@ class StudentController extends Controller
     {
         try {
             $data = Student::where('id', $id)->first();
-            if ($data->image && (file_exists(storage_path('app/public/images/') . $data->image))) {
-                unlink(storage_path('app/public/images/') . $data->image);
+            if ($data->image && Storage::disk('public')->exists('images/' . $data->image)) {
+                Storage::disk('public')->delete('images/' . $data->image);
             }
             $data = Student::where('id', $id)->delete();
             return [

@@ -13,12 +13,13 @@ class CreateTableClassroom extends Migration
      */
     public function up()
     {
+        if (!Schema::hasTable('classrooms')) {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.
