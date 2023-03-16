@@ -11,7 +11,9 @@ class Section extends Model
 
     protected $fillable = [
         'name',
+        'classroom_id',
     ];
+<<<<<<< HEAD
 
       public function applicants(){
         return $this->hasMany(Applicant::class);
@@ -27,3 +29,6 @@ class Section extends Model
   public function attendance(){
         return $this->hasOne(Attendance::class);
     }}
+=======
+}
+>>>>>>> mahdi
