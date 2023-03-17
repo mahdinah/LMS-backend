@@ -72,6 +72,9 @@ Route::post('/register', [\App\Http\Controllers\UserController::class, 'register
 // Login a user
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
+// Login an admin
+Route::post('/loginAdmin', [\App\Http\Controllers\AdminController::class, 'loginAdmin']);
+
 // Logout a user
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:api');
 
