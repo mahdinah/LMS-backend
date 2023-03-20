@@ -23,7 +23,7 @@ class CreateTableStudent extends Migration
             $table->string('gender');
             $table->date('dateofbirth')->nullable();
             $table->string('email')->unique()->nullable();
-            $table->string('pnumber')->unique()->nullable();
+            $table->integer('pnumber')->unique()->nullable();
             $table->string('address')->nullable();
             $table->string('image')->nullable();
             $table->string('HealthProblems')->nullable()->default('NULL');;

@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\UserController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -72,11 +72,19 @@ Route::post('/register', [\App\Http\Controllers\UserController::class, 'register
 // Login a user
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
-// Login an admin
-Route::post('/loginAdmin', [\App\Http\Controllers\AdminController::class, 'loginAdmin']);
+
+// Register a new admin
+Route::post('/Adminregister', [\App\Http\Controllers\AdminAuthController::class, 'Adminregister']);
+
+// Login a admin
+Route::post('/adminlogin', [\App\Http\Controllers\AdminAuthController::class, 'Adminlogin']);
 
 // Logout a user
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:api');
+
+// Logout a user
+Route::post('/adminlogout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:api');
+
 
 Route::get('/users', [\App\Http\Controllers\UserController::class, 'getUsers']);
 

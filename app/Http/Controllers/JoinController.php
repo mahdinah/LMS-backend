@@ -68,6 +68,7 @@ class JoinController extends Controller
                     'classrooms.id as classroom_id',
                     'classrooms.name as classroom_name',
                 ]);
+            
             return [
                 'success' => true,
                 'data' => $data,
