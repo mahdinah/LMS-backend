@@ -15,11 +15,12 @@ class Admin extends Authenticatable implements JWTSubject
         'lname',
         'username',
         'password',
-        'remember_token',
+
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
         // 'remember_token',
     ];
 

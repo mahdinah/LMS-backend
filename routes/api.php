@@ -74,10 +74,10 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 
 // Register a new admin
-Route::post('/Adminregister', [\App\Http\Controllers\AdminAuthController::class, 'Adminregister']);
+Route::post('/adminregister', [\App\Http\Controllers\AdminAuthController::class, 'adminregister']);
 
 // Login a admin
-Route::post('/adminlogin', [\App\Http\Controllers\AdminAuthController::class, 'Adminlogin']);
+Route::post('/adminlogin', [\App\Http\Controllers\AdminAuthController::class, 'adminlogin']);
 
 // Logout a user
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:api');

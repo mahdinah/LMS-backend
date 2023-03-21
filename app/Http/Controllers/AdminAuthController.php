@@ -2,98 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
-
-class AuthController extends Controller
+use Illuminate\Support\Facades\Auth;
+class AdminAuthController extends Controller
 {
-    public function sendResponse($data, $message, $status = 200) 
-    {
-        $response = [
-            'data' => $data,
-            'message' => $message
-        ];
-
-        return response()->json($response, $status);
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct() {
+        $this->middleware('auth:admin', ['except' => ['adminlogin', 'adminregister']]);
     }
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
 
-    public function sendError($errorData, $message, $status = 500)
-    {
-        $response = [];
-        $response['message'] = $message;
-        if (!empty($errorData)) {
-            $response['data'] = $errorData;
-        }
+    /**
+     * Register a User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function adminregister(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'fname' => 'required|string|between:2,100',
+            'lname' => 'required|string|between:2,100',
+            'username' => 'required|string|email|max:100|unique:admins',
+            'password' => 'required|string|min:6',
 
-        return response()->json($response, $status);
-    }
-
-    public function Adminregister(Request $request) 
-    {
-        $input = $request->only('fname', 'lname','username', 'password');
-
-        $validator = Validator::make($input, [
-            'fname' => 'required',
-            'lname' => 'required',
-            'username' => 'required|email|unique:admins',
-            'password' => 'required|min:8',
         ]);
-
         if($validator->fails()){
-            return $this->sendError($validator->errors(), 'Validation Error', 422);
+            return response()->json($validator->errors()->toJson(), 400);
         }
-
-        $input['password'] = bcrypt($input['password']); // use bcrypt to hash the passwords
-        $user = User::create($input); // eloquent creation of data
-
-        $success['admin'] = $user;
-
-        return $this->sendResponse($success, 'user registered successfully', 201);
-
+        $user = Admin::create(array_merge(
+                    $validator->validated(),
+                    ['password' => bcrypt($request->password)]
+                ));
+        return response()->json([
+            'message' => 'Admin successfully registered',
+            'user' => $user
+        ], 201);
     }
-
-    public function login(Request $request)
-    {
-        $input = $request->only('email', 'password');
-
-        $validator = Validator::make($input, [
-            'email' => 'required',
-            'password' => 'required',
+    public function adminlogin(Request $request){
+    	$validator = Validator::make($request->all(), [
+            'username' => 'required|email',
+            'password' => 'required|string|min:6',
         ]);
-
-        if($validator->fails()){
-            return $this->sendError($validator->errors(), 'Validation Error', 422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
-
-        try {
-            // this authenticates the user details with the database and generates a token
-            if (! $token = JWTAuth::attempt($input)) {
-                return $this->sendError([], "invalid login credentials", 400);
-            }
-        } catch (JWTException $e) {
-            return $this->sendError([], $e->getMessage(), 500);
+        if (! $token = auth()->attempt($validator->validated())) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        $success = [
-            'token' => $token,
-        ];
-        return $this->sendResponse($success, 'successful login', 200);
+        return $this->createNewToken($token);
     }
-
-    public function getUser() 
-    {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return $this->sendError([], "user not found", 403);
-            } 
-        } catch (JWTException $e) {
-            return $this->sendError([], $e->getMessage(), 500);
-        }
-
-        return $this->sendResponse($user, "user data retrieved", 200);
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function adminlogout() {
+        auth()->logout();
+        return response()->json(['message' => 'Admin successfully signed out']);
+    }
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh() {
+        return $this->createNewToken(auth()->refresh());
+    }
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userProfile() {
+        return response()->json(auth()->user());
+    }
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function createNewToken($token){
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
+        ]);
     }
 }
